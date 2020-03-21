@@ -4,13 +4,15 @@ import Foundation
 enum AccountType: Int, CaseIterable
 {
   case gitHub = 0
-  case bitbucketCloud = 1
-  case bitbucketServer = 2
-  case teamCity = 3
+  case gitLab = 1
+  case bitbucketCloud = 2
+  case bitbucketServer = 3
+  case teamCity = 4
   
   enum Names
   {
     static let gitHub = "github"
+    static let gitLab = "gitlab"
     static let bitbucketCloud = "bitbucketCloud"
     static let bitbucketServer = "bitbucketServer"
     static let teamCity = "teamCity"
@@ -24,6 +26,8 @@ enum AccountType: Int, CaseIterable
     switch name {
       case Names.gitHub:
         self = .gitHub
+      case Names.gitLab:
+        self = .gitLab
       case Names.bitbucketCloud:
         self = .bitbucketCloud
       case Names.bitbucketServer:
@@ -39,6 +43,7 @@ enum AccountType: Int, CaseIterable
   {
     switch self {
       case .gitHub: return Names.gitHub
+      case .gitLab: return Names.gitLab
       case .bitbucketCloud: return Names.bitbucketCloud
       case .bitbucketServer: return Names.bitbucketServer
       case .teamCity: return Names.teamCity
@@ -49,6 +54,7 @@ enum AccountType: Int, CaseIterable
   {
     switch self {
       case .gitHub: return ›"GitHub"
+      case .gitLab: return ›"GitLab"
       case .bitbucketCloud: return ›"Bitbucket Cloud"
       case .bitbucketServer: return ›"Bitbucket Server"
       case .teamCity: return ›"TeamCity"
@@ -58,10 +64,22 @@ enum AccountType: Int, CaseIterable
   var defaultLocation: String
   {
     switch self {
-      case .gitHub: return "https://api.github.com"
-      case .bitbucketCloud: return "https://api.bitbucket.org"
+      case .gitHub: return "" // "https://api.github.com"
+      case .gitLab: return ""
+      case .bitbucketCloud: return "" // "https://api.bitbucket.org"
       case .bitbucketServer: return ""
       case .teamCity: return ""
+    }
+  }
+
+  /// True if the service uses an API and therefore needs the location to be set
+  var needsLocation: Bool
+  {
+    switch self {
+      case .gitHub, .gitLab, .bitbucketCloud:
+        return false
+      case .bitbucketServer, .teamCity:
+        return true
     }
   }
   
@@ -69,6 +87,7 @@ enum AccountType: Int, CaseIterable
   {
     switch self {
       case .gitHub: return .xtGitHubTemplate
+      case .gitLab: return .xtGitLabTemplate
       case .bitbucketCloud, .bitbucketServer: return .xtBitBucketTemplate
       case .teamCity: return .xtTeamCityTemplate
     }

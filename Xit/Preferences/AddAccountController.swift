@@ -28,9 +28,7 @@ class AddAccountController: SheetController
   }
   
   var accountType: AccountType
-  {
-    return AccountType(rawValue: servicePopup.indexOfSelectedItem)!
-  }
+  { AccountType(rawValue: servicePopup.indexOfSelectedItem)! }
   @ControlStringValue var userName: String
   @ControlStringValue var password: String
   @ControlURLValue var location: URL?
@@ -42,6 +40,16 @@ class AddAccountController: SheetController
     $userName = userField
     $password = passwordField
     $location = locationField
+
+    let menu = servicePopup.menu!
+
+    menu.removeAllItems()
+    for accountType in AccountType.allCases {
+      let item = menu.addItem(withTitleString: accountType.displayName,
+                              action: nil, keyEquivalent: "")
+
+      item.image = NSImage(named: accountType.imageName)
+    }
   }
   
   func showFieldAlert(_ message: String, field: NSView)
@@ -65,7 +73,7 @@ class AddAccountController: SheetController
       return
     }
     
-    guard location != nil
+    guard !accountType.needsLocation || location != nil
     else {
       showFieldAlert("The location field must have a valid URL.",
                      field: locationField)
@@ -125,5 +133,6 @@ class AddAccountController: SheetController
   func syncLocationField()
   {
     locationField.stringValue = accountType.defaultLocation
+    locationField.isEnabled = accountType.needsLocation
   }
 }
