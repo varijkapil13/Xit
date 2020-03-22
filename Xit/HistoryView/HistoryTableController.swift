@@ -13,6 +13,7 @@ public class HistoryTableController: NSViewController,
     static let commit = ¶"commit"
     static let date = ¶"date"
     static let name = ¶"name"
+    static let sha = ¶"sha"
   }
   
   @IBOutlet var contextMenu: NSMenu!
@@ -320,6 +321,9 @@ extension HistoryTableController: NSTableViewDelegate
 
       case ColumnID.date:
         (result as! DateCellView).date = entry.commit.commitDate
+      
+    case ColumnID.sha:
+      result.textField?.stringValue = String(entry.commit.sha.prefix(7))
       
       case ColumnID.name:
         var text: String
